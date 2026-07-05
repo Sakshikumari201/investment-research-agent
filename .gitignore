@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Local env files (contain private API keys)
+.env
+server/.env
+client/.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Production builds
+client/dist/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+server/logs/
+*.log
+
+# System files & IDEs
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
