@@ -35,14 +35,20 @@ app.use((req, res, next) => {
 // Register Global Error Handler
 app.use(errorHandler);
 
-// Listen on Port
-const PORT = config.port || 5000;
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(` 🚀 AlphaLens AI Engine backend booted successfully!`);
-  console.log(` Port: ${PORT}`);
-  console.log(` Node Environment: ${config.nodeEnv}`);
-  console.log(` Target LLM Model: ${config.geminiModel}`);
-  console.log(` Caching TTL: 10 minutes`);
-  console.log(`=======================================================`);
-});
+// Export app for Vercel Serverless Functions
+module.exports = app;
+
+// Listen on Port (only if run directly)
+if (require.main === module) {
+  const PORT = config.port || 5000;
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(` 🚀 AlphaLens AI Engine backend booted successfully!`);
+    console.log(` Port: ${PORT}`);
+    console.log(` Node Environment: ${config.nodeEnv}`);
+    console.log(` Target LLM Model: ${config.geminiModel}`);
+    console.log(` Caching TTL: 10 minutes`);
+    console.log(`=======================================================`);
+  });
+}
+
