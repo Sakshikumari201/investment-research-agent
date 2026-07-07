@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Clock, PlayCircle, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, Clock, PlayCircle, ChevronDown, ChevronUp, Radio } from 'lucide-react';
 
 /**
  * Stepper Component
  * Renders the multi-agent workflow timeline. Shows execution timers and expands node outputs.
+ * Stylized as a tactical HUD pipeline monitor.
  */
 export function Stepper({ 
   executionTimes = {}, 
@@ -17,57 +18,66 @@ export function Stepper({
   const steps = [
     { 
       key: 'financialAgent', 
-      label: 'Financial Agent', 
+      label: 'FINANCIAL_AGENT', 
       desc: 'Retrieves stock statistics & fundamentals',
-      outputKey: 'financialAnalysis'
+      outputKey: 'financialAnalysis',
+      theme: 'cyan'
     },
     { 
       key: 'validationAgent', 
-      label: 'Validation Agent', 
+      label: 'VALIDATION_AGENT', 
       desc: 'Validates integrity and consistency of data',
-      outputKey: 'validationNotesText'
+      outputKey: 'validationNotesText',
+      theme: 'amber'
     },
     { 
       key: 'newsAgent', 
-      label: 'News Sentiment Agent', 
+      label: 'NEWS_SENTIMENT_AGENT', 
       desc: 'Parses Google News RSS & evaluates sentiment',
-      outputKey: 'newsAnalysis'
+      outputKey: 'newsAnalysis',
+      theme: 'indigo'
     },
     { 
       key: 'competitionAgent', 
-      label: 'Competition Agent', 
+      label: 'COMPETITION_AGENT', 
       desc: 'Benchmarks against industry peers',
-      outputKey: 'competitionAnalysis'
+      outputKey: 'competitionAnalysis',
+      theme: 'purple'
     },
     { 
       key: 'riskAgent', 
-      label: 'Risk Agent', 
+      label: 'RISK_AGENT', 
       desc: 'Identifies downside liabilities & valuation caps',
-      outputKey: 'riskAnalysis'
+      outputKey: 'riskAnalysis',
+      theme: 'rose'
     },
     { 
       key: 'marketIntelAgent', 
-      label: 'Market Intelligence Agent', 
+      label: 'MARKET_INTELLIGENCE_AGENT', 
       desc: 'Analyzes macro industry tailwinds & trends',
-      outputKey: 'marketIntelAnalysis'
+      outputKey: 'marketIntelAnalysis',
+      theme: 'cyan'
     },
     { 
       key: 'bullAgent', 
-      label: 'Bull Analyst', 
+      label: 'BULL_ANALYST', 
       desc: 'Compiles the optimistic investment thesis',
-      outputKey: 'bullAnalysis'
+      outputKey: 'bullAnalysis',
+      theme: 'emerald'
     },
     { 
       key: 'bearAgent', 
-      label: 'Bear Analyst', 
+      label: 'BEAR_ANALYST', 
       desc: 'Compiles the contrarian short thesis',
-      outputKey: 'bearAnalysis'
+      outputKey: 'bearAnalysis',
+      theme: 'rose'
     },
     { 
       key: 'judgeAgent', 
-      label: 'Judge Node', 
+      label: 'JUDGE_NODE', 
       desc: 'Synthesizes debates and issues verdict',
-      outputKey: 'verdictText'
+      outputKey: 'verdictText',
+      theme: 'emerald'
     }
   ];
 
@@ -80,23 +90,16 @@ export function Stepper({
   };
 
   const getStatus = (stepKey, index) => {
-    // If activeStepIndex is provided and matches this index, it is running
     if (index === activeStepIndex) return 'running';
-    
-    // If we have an execution time, it has completed
     if (executionTimes[stepKey] !== undefined) return 'done';
-    
-    // If activeStepIndex is set and this step is ahead of the active index, it is pending
     if (activeStepIndex !== -1 && index > activeStepIndex) return 'pending';
-    
-    // Otherwise if activeStepIndex is -1 and we have no execution time, it might be running or skipped
-    return 'done'; // default to done if we are displaying final report
+    return 'done'; // default to done if no active scanner simulation is running
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-1">
-        Multi-Agent Execution Pipeline
+    <div className="flex flex-col gap-4 font-tech">
+      <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
+        <Radio size={14} className="text-accent-500 animate-pulse" /> Telemetry Execution Log
       </h3>
       <div className="flex flex-col">
         {steps.map((step, index) => {
@@ -108,61 +111,76 @@ export function Stepper({
           // Get specific text output
           let rawOutput = agentOutputs[step.outputKey];
           if (step.key === 'validationAgent' && agentOutputs.validationNotes) {
-            rawOutput = `Status: ${agentOutputs.validationNotes.dataStatus}\n\nValidation Notes:\n${agentOutputs.validationNotes.validationNotes}\n\nMissing Fields:\n${agentOutputs.validationNotes.missingFields?.join(', ') || 'None'}\n\nContradictions:\n${agentOutputs.validationNotes.contradictions?.join(', ') || 'None'}`;
+            rawOutput = `[SYSTEM_STATUS] ${agentOutputs.validationNotes.dataStatus}\n\n[VALIDATION_NOTES]\n${agentOutputs.validationNotes.validationNotes}\n\n[MISSING_FIELDS] ${agentOutputs.validationNotes.missingFields?.join(', ') || 'None'}\n[CONTRADICTIONS] ${agentOutputs.validationNotes.contradictions?.join(', ') || 'None'}`;
           } else if (step.key === 'judgeAgent' && agentOutputs.decision) {
             rawOutput = agentOutputs.decision.reasoning;
           }
 
           const hasOutput = !!rawOutput;
 
+          // Compute connection line color
+          let lineColor = "bg-slate-900";
+          if (status === 'done') {
+            lineColor = "bg-gradient-to-b from-emerald-500 to-emerald-600 shadow-[0_0_8px_rgba(16,185,129,0.3)]";
+          } else if (status === 'running') {
+            lineColor = "bg-gradient-to-b from-emerald-500 to-accent-500 animate-pulse";
+          }
+
           return (
             <div key={step.key} className="flex flex-col">
               <div className="flex gap-4 relative">
+                
                 {/* Connecting line */}
                 {index < steps.length - 1 && (
-                  <div className="absolute left-[15px] top-[26px] bottom-0 w-0.5 bg-slate-800" />
+                  <div className={`absolute left-[15px] top-[28px] bottom-0 w-[2px] ${lineColor} z-0 transition-all duration-500`} />
                 )}
 
                 {/* Status icon indicators */}
-                <div className="flex items-start pt-1 z-10">
+                <div className="flex items-start pt-1.5 z-10">
                   {status === 'done' && (
-                    <CheckCircle2 size={32} className="text-emerald-500 bg-[#0b0f19] rounded-full p-0.5" />
+                    <div className="relative flex items-center justify-center bg-[#050811] rounded-full p-0.5">
+                      <CheckCircle2 size={28} className="text-emerald-400 fill-emerald-950/20" />
+                      <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping opacity-20" />
+                    </div>
                   )}
                   {status === 'running' && (
-                    <PlayCircle size={32} className="text-accent-400 bg-[#0b0f19] rounded-full p-0.5 animate-pulse" />
+                    <div className="relative flex items-center justify-center bg-[#050811] rounded-full p-0.5">
+                      <PlayCircle size={28} className="text-accent-400 fill-accent-950/20 animate-pulse" />
+                      <div className="absolute inset-0 rounded-full border border-accent-400/40 animate-ping" />
+                    </div>
                   )}
                   {status === 'pending' && (
-                    <div className="w-[30px] h-[30px] rounded-full border-2 border-slate-700 bg-[#0b0f19] flex items-center justify-center text-xs text-slate-500 font-bold">
-                      {index + 1}
+                    <div className="w-[28px] h-[28px] rounded-full border border-slate-800 bg-[#050811] flex items-center justify-center text-[10px] text-slate-600 font-bold font-mono">
+                      0{index + 1}
                     </div>
                   )}
                 </div>
 
                 {/* Step content detail */}
                 <div 
-                  className={`flex-1 pb-6 pr-2 ${hasOutput && status === 'done' ? 'cursor-pointer hover:opacity-90' : ''}`}
+                  className={`flex-1 pb-5 pr-2 ${hasOutput && status === 'done' ? 'cursor-pointer hover:opacity-90' : ''}`}
                   onClick={() => hasOutput && status === 'done' && handleToggleExpand(step.key)}
                 >
-                  <div className="flex justify-between items-start gap-2">
-                    <div>
-                      <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
-                        {step.label}
+                  <div className="flex justify-between items-start gap-2 bg-slate-950/20 hover:bg-slate-950/40 p-2.5 rounded-lg border border-transparent hover:border-slate-900 transition-all group">
+                    <div className="flex-1">
+                      <h4 className="text-xs font-black tracking-widest text-slate-200 flex flex-wrap items-center gap-2 font-mono">
+                        <span>{step.label}</span>
                         {status === 'done' && time !== undefined && (
-                          <span className="text-[10px] text-slate-400 font-normal flex items-center gap-0.5 bg-slate-800/80 px-1.5 py-0.5 rounded">
-                            <Clock size={10} /> {time}s
+                          <span className="text-[9px] text-slate-400 font-normal flex items-center gap-0.5 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                            <Clock size={8} /> {time}s
                           </span>
                         )}
                         {status === 'done' && confidence !== undefined && (
-                          <span className="text-[10px] text-accent-400 font-normal bg-accent-950/80 border border-accent-900/30 px-1.5 py-0.5 rounded">
-                            Conf: {confidence}%
+                          <span className="text-[9px] text-accent-400 font-normal bg-accent-950/60 border border-accent-900/30 px-1.5 py-0.5 rounded">
+                            CONF_IND: {confidence}%
                           </span>
                         )}
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">{step.desc}</p>
+                      <p className="text-[10px] text-slate-500 mt-1 leading-normal font-sans">{step.desc}</p>
                     </div>
                     {hasOutput && status === 'done' && (
-                      <div className="text-slate-500 group-hover:text-white pt-1">
-                        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      <div className="text-slate-600 group-hover:text-accent-400 pt-0.5 transition-colors">
+                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </div>
                     )}
                   </div>
@@ -170,9 +188,15 @@ export function Stepper({
                   {/* Expanded Report Content */}
                   {isExpanded && hasOutput && (
                     <div 
-                      className="mt-3 p-4 bg-slate-900/75 border border-slate-800 rounded-lg text-xs leading-relaxed text-slate-300 font-mono whitespace-pre-line animate-slide-down max-h-[300px] overflow-y-auto"
+                      className="mt-2.5 p-4 bg-[#03060c] border border-slate-900 rounded-lg text-[10px] leading-relaxed text-slate-300 font-mono whitespace-pre-line animate-slide-down max-h-[300px] overflow-y-auto relative"
                       onClick={(e) => e.stopPropagation()} // stop parent toggle
                     >
+                      {/* Technical tag overlay */}
+                      <div className="absolute top-2 right-2 text-[8px] font-bold text-slate-600 tracking-widest bg-slate-950 px-1.5 py-0.5 rounded border border-slate-900">
+                        RAW_TELEMETRY
+                      </div>
+                      
+                      <span className="text-accent-500 font-bold block mb-1">=== CONSOLE_LOGS_STREAM ===</span>
                       {rawOutput}
                     </div>
                   )}

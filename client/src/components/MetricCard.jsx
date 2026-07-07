@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Star, Info, HelpCircle } from 'lucide-react';
+import { Star, HelpCircle } from 'lucide-react';
 
 /**
  * MetricCard Component
- * Displays a single financial metric with source reliability and click-to-explain details.
+ * Displays a single financial metric in a notched HUD panel with hover scan lines
+ * and an interactive click-to-explain console details screen.
  */
 export function MetricCard({
   title = '',
@@ -25,8 +26,8 @@ export function MetricCard({
         {[...Array(5)].map((_, i) => (
           <Star 
             key={i} 
-            size={10} 
-            className={i < rating ? "fill-amber-400 text-amber-400" : "text-slate-600"} 
+            size={9} 
+            className={i < rating ? "fill-amber-400 text-amber-400" : "text-slate-700"} 
           />
         ))}
       </div>
@@ -35,71 +36,95 @@ export function MetricCard({
 
   const hasTrend = trend && trend !== '';
   const isPositive = trend.includes('+') || trend.includes('▲') || parseFloat(trend) > 0;
+  
+  // Decide panel theme color based on metric character
+  let panelTheme = "hud-panel border-slate-900";
+  let trendColor = "text-slate-400";
+  
+  if (hasTrend) {
+    if (isPositive) {
+      panelTheme = "hud-panel hud-panel-emerald hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)]";
+      trendColor = "text-emerald-400";
+    } else {
+      panelTheme = "hud-panel hud-panel-rose hover:border-rose-500/30 hover:shadow-[0_0_15px_rgba(239,68,68,0.1)]";
+      trendColor = "text-rose-400";
+    }
+  } else {
+    panelTheme = "hud-panel hover:border-accent-500/30 hover:shadow-[0_0_15px_rgba(14,165,233,0.1)]";
+  }
 
   return (
     <div 
-      className="glass-card rounded-xl p-4 flex flex-col justify-between relative group hover:border-slate-700 transition-all duration-300"
+      className={`${panelTheme} rounded-xl p-4 flex flex-col justify-between relative overflow-hidden group transition-all duration-300`}
       id={`metric-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
-      <div className="flex justify-between items-start">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+      {/* Background Cyber Grid lines for card */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:10px_10px] pointer-events:none opacity-70" />
+
+      {/* Laser Sweep Scanline on Hover */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className={`absolute left-0 right-0 h-[2px] ${isPositive && hasTrend ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : !isPositive && hasTrend ? 'bg-rose-400 shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'bg-accent-400 shadow-[0_0_8px_rgba(14,165,233,0.8)]'} animation-scan-vertical`} style={{ animation: 'scan-vertical 3s linear infinite' }} />
+      </div>
+
+      <div className="flex justify-between items-start z-10 relative">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-tech">
           {title}
         </span>
         <button 
           onClick={() => setShowExplanation(!showExplanation)}
-          className="text-slate-400 hover:text-accent-400 transition-colors p-0.5 rounded-full"
+          className="text-slate-600 hover:text-accent-400 transition-colors p-0.5 rounded-full"
           title="Explain this metric"
         >
-          <HelpCircle size={14} />
+          <HelpCircle size={13} />
         </button>
       </div>
 
-      <div className="my-2 flex items-baseline gap-2">
-        <span className="text-2xl font-bold tracking-tight text-white">
+      <div className="my-2 flex items-baseline gap-2 z-10 relative">
+        <span className="text-2xl font-black tracking-wider text-white font-mono">
           {value}
         </span>
         {hasTrend && (
-          <span className={`text-xs font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <span className={`text-[10px] font-black font-mono px-1.5 py-0.5 rounded bg-slate-950/60 border border-slate-900 ${trendColor}`}>
             {trend}
           </span>
         )}
       </div>
 
       {/* Source metadata with stars */}
-      <div className="flex justify-between items-center border-t border-slate-800/60 pt-2 mt-1 text-[10px] text-slate-500">
+      <div className="flex justify-between items-center border-t border-slate-900/60 pt-2 mt-1 text-[9px] text-slate-500 font-mono z-10 relative">
         <span>{source || 'Data Feed'}</span>
         {renderStars(reliability)}
       </div>
 
       {/* Interactive Explanation Panel */}
       {showExplanation && (
-        <div className="absolute inset-0 bg-[#0d121f] rounded-xl p-3 z-10 border border-accent-500/30 flex flex-col justify-between animate-fade-in text-xs">
-          <div>
-            <div className="flex justify-between items-center mb-1 pb-1 border-b border-slate-800">
-              <span className="font-bold text-accent-400 uppercase tracking-wider text-[10px]">
-                Metric Explanation
+        <div className="absolute inset-0 bg-[#060a14] rounded-xl p-3.5 z-20 border border-accent-500/30 flex flex-col justify-between animate-fade-in text-[11px] font-sans">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+              <span className="font-bold text-accent-400 uppercase tracking-widest text-[9px] font-tech">
+                Console Diagnostic
               </span>
               <button 
                 onClick={() => setShowExplanation(false)} 
-                className="text-slate-400 hover:text-white font-bold"
+                className="text-slate-500 hover:text-white font-bold text-xs"
               >
                 ✕
               </button>
             </div>
-            <p className="text-slate-300 leading-relaxed text-[11px] mb-1">
-              {explanation || `Calculated based on live fundamental indicators for this ticker.`}
+            <p className="text-slate-300 leading-relaxed font-normal">
+              {explanation || `Fundamental indicator retrieved from audit node.`}
             </p>
             {benchmark && (
-              <p className="text-[10px] text-slate-400 italic">
-                <span className="font-semibold text-slate-300">Industry Avg:</span> {benchmark}
-              </p>
+              <div className="text-[9px] text-slate-500 mt-1 font-mono flex items-center gap-1">
+                <span className="text-accent-500 font-bold">// BENCHMARK:</span> {benchmark}
+              </div>
             )}
           </div>
           <button 
             onClick={() => setShowExplanation(false)}
-            className="w-full text-center py-1 bg-slate-800 hover:bg-slate-700 text-white rounded text-[10px] transition-colors"
+            className="w-full text-center py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded font-mono text-[9px] transition-colors mt-2"
           >
-            Dismiss
+            DISMISS_CONSOLE
           </button>
         </div>
       )}

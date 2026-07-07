@@ -23,6 +23,10 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Serve static client assets
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Fallback Route Handler (404)
 app.use((req, res, next) => {
   res.status(404).json({ error: 'NotFound', message: `Route ${req.originalUrl} not found` });
