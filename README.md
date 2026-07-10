@@ -1,178 +1,177 @@
 # AlphaLens AI - Multi-Agent Investment Intelligence Platform
 
-**AlphaLens AI** is an enterprise-grade investment research platform powered by a multi-agent LangGraph system. It automates financial audits, sentiment analysis, competitive benchmarking, and macroeconomic verification to generate explainable, institutional-quality investment recommendations.
+AlphaLens AI is a multi-agent investment research tool built with LangGraph.js and Node.js. It automates the process of gathering and auditing financial data, parsing market news, benchmarking competitors, and assessing downside risks. Instead of relying on a single generic LLM prompt, the system routes data through a structured pipeline of specialized AI agents that debate the bullish and bearish case for a stock before rendering a final investment verdict.
 
 ---
 
-## 🚀 Overview & Key Features
+## Key Features
 
-AlphaLens AI replaces static, single-prompt AI models with a team of cooperative, specialized AI agents:
-
-1. **Structured Stepper Timeline**: Animates execution steps as they complete in the backend, logging precise agent runtimes.
-2. **Transparent Scoring Tree**: Transparently breaks down the overall score into modular metrics: Financial Strength (/25), Market Sentiment (/20), Competitive Moat (/20), Risk Resilience (/20), and News Sentiment (/15).
-3. **Data Validation Audit**: A dedicated agent audits financial outputs to flag anomalies or missing data, reducing LLM hallucinations.
-4. **Bull vs Bear AI Debate**: Simulates arguments between a growth-oriented Bull Analyst and a risk-off Bear Analyst before the Judge renders the final decision.
-5. **AI Devil's Advocate**: Discloses the exact contrarian risks ("Why Not Buy?") for every recommendation.
-6. **Portfolio Simulator**: Recommends customized asset allocations (e.g. out of ₹100,000) based on selected investment styles.
-7. **Investment Personas**: Adjusts recommendation thresholds according to user preferences: Value, Growth, Dividend, Aggressive, and Conservative.
-8. **Explain like I'm 15 (ELI15)**: Simplifies complicated financial jargon into simple block analogies.
-9. **Interview Defense Mode**: Renders annotations and annotations to prepare developers to defend metrics during interviews.
-10. **Dual Stock Comparison**: Benchmarks two companies side-by-side (e.g., TSLA vs NVDA) and outputs a detailed head-to-head verdict.
-11. **Performance Caching**: In-memory cache layer with a 10-minute TTL to reduce API expenses.
+*   **State Graph Pipeline (LangGraph.js):** Orchestrates sequential agent steps in a predictable Directed Acyclic Graph (DAG) state.
+*   **Audit Checks:** A dedicated validation agent audits financial outputs, catching missing metrics or contradictions before decisions are finalized.
+*   **Bull vs Bear Debate:** Simulates a structured debate between a growth-oriented Bull agent and a risk-averse Bear agent to prevent bias.
+*   **Ecosystem & Risk Benchmarking:** Evaluates competitive moats (switching costs, brand power) and categorizes risks across macroeconomic, financial, and regulatory domains.
+*   **Style Personas:** Tailors verdicts based on user-selected styles: Value, Growth, Dividend, Aggressive, and Conservative.
+*   **Structured Output:** Generates clean JSON payloads to map the scoring breakdown, risk registry, and portfolio asset allocation.
+*   **Performance Caching:** Saves API costs and speeds up response times with a 10-minute in-memory caching layer.
+*   **Interview Defense Mode:** Built-in annotations and explanation modules (like ELI15 - "Explain like I'm 15") designed to help defend metrics during code reviews or interviews.
 
 ---
 
-## 🛠️ Architecture & Multi-Agent Flow
+## System Architecture & Agent Flow
 
-AlphaLens AI leverages a linear-and-parallel Directed Acyclic Graph (DAG) built with **LangGraph.js**:
+The backend executes a Directed Acyclic Graph (DAG) using the following node-by-node sequence:
 
 ```
 [START]
    │
    ▼
-[Supervisor] ──(Resolves Ticker symbol via Search)
+[Financial Agent] ──────────► Fetches core metrics from Yahoo Finance
    │
    ▼
-[Financial Agent]
+[Data Validation Agent] ────► Audits numbers for sanity and completeness
    │
    ▼
-[Data Validation Agent]
+[News Agent] ───────────────► Scrapes Google News RSS & scores sentiment
    │
-   ├───────────────────────────┬───────────────────────────┬───────────────────────────┐
-   ▼                           ▼                           ▼                           ▼
-[News Agent]         [Competition Agent]             [Risk Agent]       [Market Intelligence Agent]
-   │                           │                           │                           │
-   └───────────────────────────┼───────────────────────────┴───────────────────────────┘
-                               ▼
-                        [AI Debate Mode]
-                         ├── Bull Analyst
-                         └── Bear Analyst
-                               │
-                               ▼
-                         [Judge Agent]
-                               │
-                               ▼
-                            [END]
+   ▼
+[Competition Agent] ────────► Benchmarks primary competitors & moats
+   │
+   ▼
+[Risk Agent] ───────────────► Assesses financial, regulatory, and macro risks
+   │
+   ▼
+[Market Intelligence] ──────► Analyzes sector trends and industry outlook
+   │
+   ▼
+[Bull Analyst Node] ────────► Compiles the strongest possible long thesis
+   │
+   ▼
+[Bear Analyst Node] ────────► Compiles the strongest possible downside thesis
+   │
+   ▼
+[Judge Node] ───────────────► Synthesizes debate and renders structured verdict
+   │
+   ▼
+[END]
 ```
 
 ---
 
-## ⚙️ Setup & Run Instructions
+## Setup & Running the Project
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm (v9 or higher)
-- A **Gemini API Key** (from Google AI Studio)
+*   Node.js (v18 or higher)
+*   npm (v9 or higher)
+*   A Gemini API Key (from Google AI Studio)
 
 ### 1. Backend Setup (`server/`)
-1. Navigate to the server folder:
-   ```bash
-   cd server
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file based on the template:
-   ```env
-   PORT=5000
-   GEMINI_API_KEY=your_gemini_api_key_here
-   GEMINI_MODEL=gemini-1.5-flash
-   NODE_ENV=development
-   ```
+1. Change into the server directory:
+    ```bash
+    cd server
+    ```
+2. Install the backend dependencies:
+    ```bash
+    npm install
+    ```
+3. Create a `.env` file in the root of the `server/` directory and configure your keys:
+    ```env
+    PORT=5000
+    GEMINI_API_KEY=your_gemini_api_key_here
+    GEMINI_MODEL=gemini-2.5-flash
+    NODE_ENV=development
+    ```
 4. Start the Express server:
-   ```bash
-   npm start
-   ```
-   *Note: If no `GEMINI_API_KEY` is supplied, the server launches in **Offline Mock Mode**, serving high-fidelity simulated responses so you can immediately explore the dashboard.*
+    ```bash
+    npm start
+    ```
+    *Note: If no `GEMINI_API_KEY` is provided, the backend automatically runs in **Offline Mock Mode**, serving high-fidelity mock data to let you explore the UI immediately.*
 
 ### 2. Frontend Setup (`client/`)
-1. Navigate to the client folder:
-   ```bash
-   cd client
-   ```
-2. Install dependencies:
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-3. Start the Vite dev server:
-   ```bash
-   npm run dev
-   ```
-4. Open your browser to: `http://localhost:5173`
+1. Change into the client directory:
+    ```bash
+    cd client
+    ```
+2. Install the frontend dependencies:
+    ```bash
+    npm install --legacy-peer-deps
+    ```
+3. Start the Vite development server:
+    ```bash
+    npm run dev
+    ```
+4. Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
-## 🏛️ Architecture Decisions & Trade-Offs
+## Design Decisions & Trade-Offs
 
-### Why LangGraph instead of a Single Prompt?
-A single LLM prompt suffers from context pollution, is prone to forgetting negative details, and often hallucinates when aggregating quantitative data with qualitative sentiment. 
-By dividing responsibilities:
-- **Financial Agent** focuses entirely on numbers.
-- **Validation Agent** acts as an independent auditor.
-- **Bull vs Bear Agents** work in opposition to check bias.
-- **Judge Agent** balances both sides, resulting in significantly higher recommendation accuracy and explainability.
+### LangGraph vs. Single Prompts
+Using a single prompt for complex investment analysis often leads to context dilution, formatting failures, and confirmation bias where the LLM ignores negative metrics if it starts building a positive outlook. Dividing responsibilities among dedicated agents ensures:
+*   The **Financial Agent** focuses purely on numbers.
+*   The **Validation Agent** serves as an independent controller checking data quality.
+*   The **Bull** and **Bear** agents are forced to make two distinct, high-fidelity arguments.
+*   The **Judge Node** acts as the final committee to balance these arguments objectively.
 
-### Why Gemini 1.5/2.5 Flash?
-We selected Gemini because it offers industry-leading speed, native structured JSON outputs (`responseMimeType: "application/json"`), a massive context window, and is highly cost-efficient compared to alternative models.
+### LLM Model Selection (Gemini 2.5 Flash)
+We selected `gemini-2.5-flash` because it has native support for structured JSON schema outputs (`responseMimeType: "application/json"`), high context limits, fast inference speeds, and is highly cost-efficient under the developer free tier.
 
-### Caching & Cost Strategy
-To prevent redundant LLM and external API expenses, we implemented a 10-minute in-memory cache layer. If a user repeats a query (e.g. searching "Tesla" multiple times), AlphaLens AI serves the cached analysis instantly, notifying the user with a "Served from Cache - Last updated X minutes ago" banner.
-
-### Data Security & Validation
-Paid search APIs (like SerpAPI) require credential storage and carry rate limits. To make AlphaLens robust and zero-cost, we developed:
-- An automated Google News XML RSS parser.
-- Integration with the public Yahoo Finance search API for instant symbol resolution.
-- Sanity checks in the Data Validation Agent to detect and report missing fields or statistical contradictions.
+### Zero-Cost Scrapers & Data Pipeline
+To avoid requiring paid third-party search APIs (like SerpAPI or Tavily) which carry severe rate limits and credential costs for users, we built:
+*   An automated Google News RSS parser that pulls headlines and content snippets directly via XML.
+*   An integration with `yahoo-finance2` that falls back to high-fidelity static baseline metrics if the public API crumb endpoint is rate-limited or fails.
 
 ---
 
-## 📚 Anticipated Interview Questions & Defense
+## Example Run: Apple Inc. (AAPL)
 
-*   **"How do you handle API failures from external feeds?"**
-    *   *Defense:* The agents are designed with grace fallbacks. If the quote summary from Yahoo Finance fails, the Financial Agent packs the error message into a structured JSON payload and passes it along. The Validation Agent detects the partial state, tags it as `PARTIAL`, and the Judge Node decreases its overall confidence score while noting the data outage in the final report.
-*   **"Why separate the Bull Analyst from the Bear Analyst?"**
-    *   *Defense:* LLMs suffer from "confirmation bias" - if they start drafting a buy case, they tend to ignore risk signals. Separating them forces the LLM to generate two distinct, high-fidelity arguments. The Judge Node is then forced to review the best of both cases, simulating a real-world investment committee.
-*   **"How would you scale this application to thousands of concurrent requests?"**
-    *   *Defense:* We would move the caching layer from in-memory Node state to a distributed Redis cache. Additionally, we could run the parallel graph branches (News, Competition, Risk, Market Intelligence) asynchronously using serverless functions or worker threads, preventing Node's single-threaded event loop from blocking during intensive JSON parsers.
+We ran the pipeline for **Apple Inc. (AAPL)** using the **GROWTH** investment style. The full structured JSON response from the pipeline can be viewed in [server/aapl_run_output.json](file:///c:/Users/HP/Desktop/julyass/server/aapl_run_output.json).
 
----
-
-## 📊 Example Runs & Verdicts
-
-The multi-agent pipeline was executed for **Apple Inc. (AAPL)** under the **GROWTH** investment persona. The full output response payload is saved in the repository at [server/aapl_run_output.json](file:///c:/Users/HP/Desktop/julyass/server/aapl_run_output.json).
-
-### **AAPL Analysis Summary**
-*   **Ticker/Company:** AAPL (Apple Inc.)
-*   **Investment Persona:** GROWTH
-*   **Final Decision:** **BUY**
+### **Run Summary**
+*   **Ticker:** AAPL (Apple Inc.)
+*   **Persona:** GROWTH
+*   **Verdict:** **BUY**
 *   **Overall Score:** **84 / 100**
     *   *Financial Strength:* 22 / 25
     *   *Market Sentiment:* 18 / 20
     *   *Competitive Moat:* 19 / 20
     *   *Risks Resilience:* 12 / 20
     *   *News Sentiment:* 13 / 15
-*   **Confidence Score:** **89%**
-*   **Judge's Rationale:** Apple's financial foundation is exceptionally robust, characterized by a staggering $104B in Free Cash Flow, high margins (Gross: 46.2%, Operating: 30.7%), and an outstanding 154% Return on Equity. The brand equity and switching costs within the iOS ecosystem provide a deep moat. While high-severity risks like antitrust investigations and supply chain concentration in China are present, they are acceptable under the aggressive GROWTH persona.
-*   **Recommended Asset Allocation (out of ₹100,000):**
-    *   **AAPL Stock:** 25% (₹25,000)
-    *   **Equity Index ETFs:** 35% (₹35,000)
-    *   **Cash Reserves:** 30% (₹30,000)
-    *   **Short-Term Treasuries:** 10% (₹10,000)
+*   **Pipeline Confidence:** **89%**
+
+### **Verdict Rationale**
+Apple displays exceptional balance sheet stats with $104 billion in Free Cash Flow (FCF), a gross margin of 46.2%, and an outstanding Return on Equity (ROE) of 154%. While short-term liquidity is relatively tight (current ratio of 1.04) and leverage is moderate (D/E of 1.6), its massive FCF generation makes these risks highly manageable. The brand power and high switching costs of the iOS ecosystem provide a deep competitive moat. Geopolitical supply chain concentration in China and ongoing antitrust scrutiny are significant risks, but acceptable under a growth-oriented, aggressive strategy.
+
+### **Asset Allocation Recommendation**
+For a total portfolio of ₹100,000 under the growth strategy:
+*   **AAPL Stock:** 25% (₹25,000)
+*   **Equity Index ETFs:** 35% (₹35,000)
+*   **Cash Reserves:** 30% (₹30,000)
+*   **Short-Term Treasuries:** 10% (₹10,000)
 
 ---
 
-## 🔮 What We Would Improve With More Time
+## What I'd Improve With More Time
 
-1. **Parallel Node Execution (Fan-Out/Fan-In):** Currently, the graph executes sequentially (`START -> Financial -> Validation -> News -> Competition -> Risk -> Market Intel -> Bull -> Bear -> Judge -> END`). Since intermediate agents (News, Competition, Risk, Market Intel) do not depend on one another, they could run in parallel to reduce latency from ~129s to ~30s.
-2. **Distributed Caching (Redis):** Transition from the current in-memory JS cache to Redis to allow cache persistence across server restarts and support horizontal scaling.
-3. **Advanced Web Retrieval APIs:** Integrate dedicated APIs (like Tavily or SearchApi) to fetch deeper real-time financial filings and analyst reports, supplementing the Google News XML parser.
-4. **Interactive Chatbot Interface:** Implement a conversational interface on the frontend, allowing users to query the Judge Agent directly about specific aspects of the investment report.
+1.  **Parallel Agent Execution:** Currently, the LangGraph flow runs sequentially (`START -> Financial -> Validation -> News -> Competition -> Risk -> Market Intel -> Bull -> Bear -> Judge -> END`). In a production setting, the intermediate research agents (News, Competition, Risk, Market Intel) do not depend on each other and can execute concurrently (fan-out/fan-in) to reduce latency from ~120s down to ~30s.
+2.  **Distributed Cache (Redis):** Replace the local, in-memory Node.js cache with a Redis cluster to persist data across backend restarts and support horizontal scaling.
+3.  **Real-Time Search APIs:** Supplement the RSS news scraper with dedicated API engines (like Tavily or SearchApi) to retrieve formal analyst consensus filings and macroeconomic reports.
+4.  **Interactive Conversation:** Implement a chatbot interface on the dashboard so users can follow up on the Judge Node's decision and drill down into specific data points.
 
 ---
 
-## 💬 BONUS: LLM Chat Session Transcripts & Logs
+## Interview Questions & Code Defense
 
-This project was built using agentic AI, with continuous chat sessions and automated tool executions. The complete logs of this session are included in the root directory:
+*   **"How do you handle API rate-limiting or failures from Yahoo Finance?"**
+    *   *Defense:* The services use robust fallbacks. If Yahoo Finance returns a rate-limit error, the controller catches the failure, loads a static high-fidelity baseline dataset for popular tickers (like AAPL or TSLA), and flags the data status as `PARTIAL` or `COMPLETED`. The Judge Node adjusts its overall confidence score downward if fallback data was used.
+*   **"Why separate the Bull Analyst from the Bear Analyst nodes?"**
+    *   *Defense:* LLMs naturally suffer from confirmation bias—once a model starts building a positive thesis, it tends to selectively filter out risk indicators. Separating the prompts into two distinct, opposing agents forces the LLM to generate high-conviction arguments for both sides. The Judge Node is then forced to weigh both analyses, mimicking a real-world investment committee.
+*   **"Why not run everything in parallel in the Graph?"**
+    *   *Defense:* While sequential graphs are slightly slower, they allow downstream agents to benefit from the context generated by upstream agents (e.g. the Validation Agent checks the Financial Agent's output, and the Bull/Bear Agents review the unified risk, competitor, and sentiment inputs). If we scale this up, we would run the independent research nodes in parallel and aggregate their outputs in a single merge node before initiating the Bull vs Bear debate.
+
+---
+
+## BONUS: LLM Chat Session Logs
+
+As part of the development process, all interactions, prompts, tool outputs, and execution results were logged. You can review the step-by-step history directly in the root directory:
 *   [chat_transcript.jsonl](file:///c:/Users/HP/Desktop/julyass/chat_transcript.jsonl): Token-optimized logs of the development conversation.
-*   [chat_transcript_full.jsonl](file:///c:/Users/HP/Desktop/julyass/chat_transcript_full.jsonl): Full, untruncated transcript logs containing every single prompt, LLM response, and tool execution history.
+*   [chat_transcript_full.jsonl](file:///c:/Users/HP/Desktop/julyass/chat_transcript_full.jsonl): Untruncated transcript logs containing every prompt, response, and tool trace.
