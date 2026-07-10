@@ -276,32 +276,52 @@ export function Sidebar({
       </div>
 
       {/* Interactive Command Terminal */}
-      <div className="p-4 border-t border-[#0e1627] bg-[#020306]/90 flex flex-col gap-2 font-mono shrink-0">
+      <div className="p-4 border-t border-[#0e1627] bg-[#070b14]/90 flex flex-col gap-2 font-mono shrink-0">
         <div className="flex justify-between items-center px-1">
-          <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
-            <Terminal size={11} className="text-accent-400 animate-pulse" /> CLI_CONSOLE_V1.2
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 font-sans">
+            <Terminal size={12} className="text-accent-400 animate-pulse" /> SYSTEM_CLI_CONSOLE
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 relative" />
+            <span className="text-[8px] text-slate-500 font-bold ml-1 uppercase">READY</span>
+          </div>
         </div>
         
         {/* Terminal logs list */}
-        <div className="bg-slate-950/90 border border-slate-900/60 p-2.5 rounded-lg text-[9px] leading-normal text-slate-400 overflow-y-auto max-h-24 h-24 scrollbar-thin select-text font-mono flex flex-col gap-0.5">
-          {terminalLogs.map((log, index) => (
-            <div key={index} className="break-all font-mono">
-              {log}
-            </div>
-          ))}
+        <div className="bg-slate-950/80 border border-slate-900 p-3 rounded-lg text-[11px] leading-relaxed text-slate-200 overflow-y-auto h-28 max-h-28 scrollbar-thin select-text font-mono flex flex-col gap-1">
+          {terminalLogs.map((log, index) => {
+            const isInput = log.startsWith('>');
+            const isError = log.includes('ERROR') || log.includes('not recognized');
+            const isSuccess = log.includes('adjusted') || log.includes('OK') || log.includes('cleared') || log.includes('active') || log.includes('Available commands');
+            return (
+              <div 
+                key={index} 
+                className={`break-words font-mono ${
+                  isInput 
+                    ? 'text-accent-400 font-bold' 
+                    : isError 
+                      ? 'text-rose-400 font-semibold' 
+                      : isSuccess 
+                        ? 'text-emerald-400 font-medium' 
+                        : 'text-slate-300'
+                }`}
+              >
+                {log}
+              </div>
+            );
+          })}
         </div>
 
         {/* Input box */}
-        <form onSubmit={handleTerminalSubmit} className="flex items-center bg-slate-950 border border-slate-900 rounded-lg px-2 py-1.5">
-          <span className="text-accent-500 font-bold mr-1 px-0.5 select-none font-mono">&gt;</span>
+        <form onSubmit={handleTerminalSubmit} className="flex items-center bg-slate-950 border border-slate-900 rounded-lg px-2.5 py-2 focus-within:border-accent-500/50 transition-colors">
+          <span className="text-accent-400 font-bold mr-2 select-none font-mono text-xs">&gt;</span>
           <input
             type="text"
             value={terminalInput}
             onChange={(e) => setTerminalInput(e.target.value)}
-            className="bg-transparent text-slate-200 focus:outline-none flex-1 text-[9px] font-mono placeholder-slate-700 w-full"
-            placeholder="Type 'help' for directives..."
+            className="bg-transparent text-slate-100 focus:outline-none flex-1 text-[11px] font-mono placeholder-slate-700 w-full"
+            placeholder="Enter CLI directive (e.g. 'help')..."
           />
         </form>
       </div>
