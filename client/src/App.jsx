@@ -62,6 +62,7 @@ export function App() {
         onRemoveHistory={handleRemoveHistory}
         onRemoveWatchlist={handleRemoveWatchlist}
         onClearAll={handleClearHistory}
+        onAddWatchlist={handleAddWatchlist}
       />
 
       {/* Primary Page Frame */}

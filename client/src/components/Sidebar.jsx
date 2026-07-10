@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutDashboard, ArrowRightLeft, BookOpen, Star, Trash2, ShieldAlert } from 'lucide-react';
+import React, { useState } from 'react';
+import { LayoutDashboard, ArrowRightLeft, BookOpen, Star, Trash2, ShieldAlert, Terminal } from 'lucide-react';
 
 /**
  * Sidebar Component
@@ -14,8 +14,107 @@ export function Sidebar({
   onSelectTicker = () => {},
   onRemoveHistory = () => {},
   onRemoveWatchlist = () => {},
-  onClearAll = () => {}
+  onClearAll = () => {},
+  onAddWatchlist = () => {}
 }) {
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalLogs, setTerminalLogs] = useState([
+    'AlphaLens AI CLI Console active.',
+    'Enter "help" for a list of directives.'
+  ]);
+
+  const handleTerminalSubmit = (e) => {
+    e.preventDefault();
+    const input = terminalInput.trim();
+    if (!input) return;
+
+    setTerminalLogs((prev) => [...prev, `> ${input}`]);
+    setTerminalInput('');
+
+    const parts = input.split(' ');
+    const command = parts[0].toLowerCase();
+    const arg = parts.slice(1).join(' ').trim();
+
+    switch (command) {
+      case 'help':
+        setTerminalLogs((prev) => [
+          ...prev,
+          'Available commands:',
+          '  run <ticker>  - Execute stock analysis',
+          '  compare       - Switch to asset benchmark tab',
+          '  watchlist add <ticker> - Pin a stock',
+          '  theme <color> - Set accent (emerald, rose, magenta, amber, cyan)',
+          '  clear         - Clear terminal console logs',
+          '  status        - Print telemetry stats'
+        ]);
+        break;
+      case 'run':
+      case 'search':
+        if (!arg) {
+          setTerminalLogs((prev) => [...prev, 'ERROR: Ticker parameter missing. Usage: run TSLA']);
+        } else {
+          const ticker = arg.toUpperCase();
+          setTerminalLogs((prev) => [...prev, `Executing pipeline command for ${ticker}...`]);
+          onSelectTicker(ticker);
+        }
+        break;
+      case 'compare':
+        setTerminalLogs((prev) => [...prev, 'Switching route to Asset Benchmark module...']);
+        setActiveTab('compare');
+        break;
+      case 'watchlist':
+        if (parts[1]?.toLowerCase() === 'add') {
+          const ticker = parts.slice(2).join('').toUpperCase();
+          if (!ticker) {
+            setTerminalLogs((prev) => [...prev, 'ERROR: Ticker missing. Usage: watchlist add AAPL']);
+          } else {
+            onAddWatchlist(ticker);
+            setTerminalLogs((prev) => [...prev, `Watchlist state adjusted for ${ticker}.`]);
+          }
+        } else {
+          setTerminalLogs((prev) => [...prev, 'Usage: watchlist add <ticker>']);
+        }
+        break;
+      case 'clear':
+        setTerminalLogs(['Console logs cleared.']);
+        break;
+      case 'status':
+        setTerminalLogs((prev) => [
+          ...prev,
+          `SYSTEM_STAT: OK`,
+          `WATCHLIST_COUNT: ${watchlist.length}`,
+          `HISTORY_COUNT: ${history.length}`
+        ]);
+        break;
+      case 'theme':
+        const themeColors = {
+          cyan: { 500: '#0ea5e9', 400: '#38bdf8', 600: '#0284c7' },
+          emerald: { 500: '#10b981', 400: '#34d399', 600: '#059669' },
+          magenta: { 500: '#d946ef', 400: '#f472b6', 600: '#c084fc' },
+          rose: { 500: '#f43f5e', 400: '#fb7185', 600: '#e11d48' },
+          amber: { 500: '#f59e0b', 400: '#fbbf24', 600: '#d97706' },
+          purple: { 500: '#a855f7', 400: '#c084fc', 600: '#9333ea' }
+        };
+        const colorName = arg.toLowerCase();
+        const colors = themeColors[colorName];
+        if (colors) {
+          document.documentElement.style.setProperty('--color-accent-500', colors[500]);
+          document.documentElement.style.setProperty('--color-accent-400', colors[400]);
+          document.documentElement.style.setProperty('--color-accent-600', colors[600]);
+          setTerminalLogs((prev) => [...prev, `Theme variables adjusted to: ${colorName.toUpperCase()}`]);
+        } else {
+          setTerminalLogs((prev) => [
+            ...prev,
+            'ERROR: Invalid theme color.',
+            'Available: cyan, emerald, magenta, rose, amber, purple'
+          ]);
+        }
+        break;
+      default:
+        setTerminalLogs((prev) => [...prev, `ERROR: Command "${command}" not recognized.`]);
+        break;
+    }
+  };
   return (
     <aside className="w-80 bg-[#04060d] border-r border-[#0e1627] flex flex-col h-screen overflow-hidden sticky top-0 font-tech">
       
@@ -176,13 +275,44 @@ export function Sidebar({
         </div>
       </div>
 
+      {/* Interactive Command Terminal */}
+      <div className="p-4 border-t border-[#0e1627] bg-[#020306]/90 flex flex-col gap-2 font-mono shrink-0">
+        <div className="flex justify-between items-center px-1">
+          <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+            <Terminal size={11} className="text-accent-400 animate-pulse" /> CLI_CONSOLE_V1.2
+          </span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        </div>
+        
+        {/* Terminal logs list */}
+        <div className="bg-slate-950/90 border border-slate-900/60 p-2.5 rounded-lg text-[9px] leading-normal text-slate-400 overflow-y-auto max-h-24 h-24 scrollbar-thin select-text font-mono flex flex-col gap-0.5">
+          {terminalLogs.map((log, index) => (
+            <div key={index} className="break-all font-mono">
+              {log}
+            </div>
+          ))}
+        </div>
+
+        {/* Input box */}
+        <form onSubmit={handleTerminalSubmit} className="flex items-center bg-slate-950 border border-slate-900 rounded-lg px-2 py-1.5">
+          <span className="text-accent-500 font-bold mr-1 px-0.5 select-none font-mono">&gt;</span>
+          <input
+            type="text"
+            value={terminalInput}
+            onChange={(e) => setTerminalInput(e.target.value)}
+            className="bg-transparent text-slate-200 focus:outline-none flex-1 text-[9px] font-mono placeholder-slate-700 w-full"
+            placeholder="Type 'help' for directives..."
+          />
+        </form>
+      </div>
+
       {/* Footer Info */}
-      <div className="p-4 border-t border-[#0e1627] bg-[#020306] flex flex-col gap-2">
-        <div className="flex items-center gap-2 text-[10px] text-slate-500 px-1 font-mono font-bold uppercase tracking-wider">
-          <ShieldAlert size={12} className="text-amber-500" />
+      <div className="p-3 border-t border-[#0e1627] bg-[#010204] flex flex-col gap-1.5 shrink-0">
+        <div className="flex items-center gap-2 text-[9px] text-slate-500 px-1 font-mono font-bold uppercase tracking-wider">
+          <ShieldAlert size={11} className="text-amber-500" />
           <span>SECURITY_LEVEL: 05</span>
         </div>
-        <p className="text-[9px] text-slate-600 px-1 leading-relaxed font-sans">
+        <p className="text-[8px] text-slate-600 px-1 leading-normal font-sans">
           AlphaLens AI evaluates stocks using multiple agents in parallel. Fully compiled in secure sandbox.
         </p>
       </div>
@@ -191,4 +321,3 @@ export function Sidebar({
 }
 
 export default Sidebar;
-import { Clock } from 'lucide-react';
