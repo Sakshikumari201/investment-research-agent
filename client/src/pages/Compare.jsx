@@ -36,13 +36,13 @@ export function Compare({
   };
 
   const getWinnerBadge = (winnerKey, reportA, reportB) => {
-    if (winnerKey === 'TIE') return <span className="text-[9px] font-mono bg-slate-900 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-800">TIE</span>;
+    if (winnerKey === 'TIE') return <span className="text-xs font-mono bg-slate-900 text-slate-400 font-bold px-2.5 py-0.5 rounded border border-slate-800">TIE</span>;
     
     const ticker = winnerKey === 'ASSET_A' ? reportA.ticker : reportB.ticker;
     const isA = winnerKey === 'ASSET_A';
 
     return (
-      <span className={`text-[9px] font-mono font-black px-2.5 py-0.5 rounded border flex items-center gap-1 shrink-0 ${
+      <span className={`text-xs font-mono font-black px-2.5 py-0.5 rounded border flex items-center gap-1 shrink-0 ${
         isA 
           ? 'bg-accent-950/40 text-accent-400 border-accent-900/40 shadow-[0_0_6px_rgba(14,165,233,0.15)]' 
           : 'bg-indigo-950/40 text-indigo-400 border-indigo-900/40 shadow-[0_0_6px_rgba(99,102,241,0.15)]'
@@ -105,7 +105,7 @@ export function Compare({
             <ArrowRightLeft className="text-accent-500 animate-pulse" size={20} />
             <span>ASSET_BENCHMARK_ENGINE</span>
           </h2>
-          <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-1">
+          <p className="text-xs text-slate-400 font-mono tracking-widest uppercase mt-1">
             // Side-by-side multi-agent delta analysis and benchmark synthesis
           </p>
         </div>
@@ -151,19 +151,19 @@ export function Compare({
         </div>
 
         {/* Strategy select */}
-        <div className="flex items-center gap-3 bg-slate-950/60 px-4 py-1.5 rounded-xl border border-slate-900 shrink-0 w-full lg:w-auto">
-          <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest font-mono">STRATEGY_SET:</label>
+        <div className="flex items-center gap-3 bg-slate-950/60 px-4 py-2.5 rounded-xl border border-slate-900 shrink-0 w-full lg:w-auto">
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">STRATEGY_SET:</label>
           <select
             value={persona}
             onChange={(e) => setPersona(e.target.value)}
-            className="bg-transparent text-xs font-bold text-slate-300 focus:outline-none cursor-pointer w-full lg:w-auto"
+            className="bg-transparent text-xs font-bold text-slate-200 focus:outline-none cursor-pointer w-full lg:w-auto"
             disabled={loading}
           >
-            <option value="GROWTH" className="bg-slate-950 text-slate-300">Growth Scanner</option>
-            <option value="VALUE" className="bg-slate-950 text-slate-300">Value Audit</option>
-            <option value="DIVIDEND" className="bg-slate-950 text-slate-300">Dividend Yield</option>
-            <option value="AGGRESSIVE" className="bg-slate-950 text-slate-300">Aggressive Alpha</option>
-            <option value="CONSERVATIVE" className="bg-slate-950 text-slate-300">Conservative Shield</option>
+            <option value="GROWTH" className="bg-slate-900 text-slate-200">Growth Scanner</option>
+            <option value="VALUE" className="bg-slate-900 text-slate-200">Value Audit</option>
+            <option value="DIVIDEND" className="bg-slate-900 text-slate-200">Dividend Yield</option>
+            <option value="AGGRESSIVE" className="bg-slate-900 text-slate-200">Aggressive Alpha</option>
+            <option value="CONSERVATIVE" className="bg-slate-900 text-slate-200">Conservative Shield</option>
           </select>
         </div>
 
@@ -184,7 +184,7 @@ export function Compare({
           </div>
           <div className="w-10 h-10 rounded-full border-2 border-accent-500 border-t-transparent animate-spin" />
           <h3 className="text-sm font-black tracking-widest text-white font-tech">RUNNING_BENCHMARK_DAG...</h3>
-          <p className="text-[10px] text-slate-500 font-mono text-center max-w-sm uppercase">
+          <p className="text-xs text-slate-400 font-mono text-center max-w-sm uppercase">
             // Aligning data matrix points for side-by-side delta resolution...
           </p>
         </div>
@@ -196,7 +196,7 @@ export function Compare({
           <AlertTriangle className="text-rose-500 shrink-0 mt-0.5" size={18} />
           <div className="font-tech">
             <h4 className="font-black text-xs uppercase tracking-widest text-rose-400">Benchmark Pipeline Failure</h4>
-            <p className="text-[10px] text-rose-300 font-mono mt-1.5 leading-relaxed bg-slate-950/40 p-3 rounded-lg border border-rose-900/10">{error}</p>
+            <p className="text-xs text-rose-200 font-mono mt-1.5 leading-relaxed bg-slate-950/40 p-3 rounded-lg border border-rose-900/10">{error}</p>
           </div>
         </div>
       )}
@@ -216,7 +216,7 @@ export function Compare({
                   <Trophy size={18} />
                 </span>
                 <div>
-                  <span className="text-[8px] uppercase font-bold text-slate-500 tracking-widest font-mono">BENCHMARKING_WINNER</span>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest font-mono">BENCHMARKING_WINNER</span>
                   <h3 className="text-lg font-black text-white tracking-wide mt-0.5">
                     {result.comparison.winner === 'TIE' 
                       ? 'Decision Tie (Hold Both Assets)' 
@@ -226,8 +226,8 @@ export function Compare({
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-slate-950/60 border border-slate-900 px-4 py-2.5 rounded-xl font-mono text-[10px]">
-                <span className="text-slate-500 font-bold uppercase tracking-widest">FINAL_VERDICT:</span>
+              <div className="flex items-center gap-4 bg-slate-950/60 border border-slate-900 px-4 py-2.5 rounded-xl font-mono text-xs">
+                <span className="text-slate-400 font-bold uppercase tracking-widest">FINAL_VERDICT:</span>
                 <span className={`font-black px-2 py-0.5 rounded border ${
                   result.comparison.verdict === 'ASSET_A' 
                     ? 'bg-accent-950/40 text-accent-400 border-accent-900/40 shadow-[0_0_6px_#0ea5e9]' 
@@ -235,13 +235,13 @@ export function Compare({
                       ? 'bg-indigo-950/40 text-indigo-400 border-indigo-900/40 shadow-[0_0_6px_#6366f1]' 
                       : 'bg-slate-900 text-slate-400 border-slate-800'
                 }`}>
-                  {result.comparison.verdict === 'ASSET_A' ? result.reportA.ticker : result.comparison.verdict === 'ASSET_B' ? result.reportB.ticker : 'TIE'}
+                  {result.comparison.verdict === 'ASSET_A' ? result.reportA.ticker : result.comparison.verdict === 'ASSET_B' ? reportB.ticker : 'TIE'}
                 </span>
               </div>
             </div>
 
             {/* Verdict summary Monospace Box */}
-            <div className="z-10 text-[10px] text-slate-300 leading-relaxed font-mono whitespace-pre-line bg-slate-950/60 p-4 rounded-xl border border-slate-900">
+            <div className="z-10 text-xs text-slate-200 leading-relaxed font-mono whitespace-pre-line bg-slate-950/60 p-4 rounded-xl border border-slate-900">
               <span className="text-emerald-500 font-bold block mb-1.5">// SYNTHESIZED_JUDGMENT_MATRIX</span>
               {result.comparison.verdictSummary}
             </div>
@@ -252,16 +252,16 @@ export function Compare({
             
             {/* Quantitative Delta Comparison Panel */}
             <div className="hud-panel rounded-2xl p-6 lg:col-span-2 relative">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-6 font-tech">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 font-tech">
                 Quantitative Delta Resolution
               </h3>
 
-              <div className="flex flex-col gap-6 font-mono text-[10px]">
+              <div className="flex flex-col gap-6 font-mono text-xs">
                 {/* Metric Delta Item: Market Cap */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {formatComparisonMetric(result.reportA.financials.marketCap)}</span>
-                    <span className="text-[9px] tracking-widest">MARKET_CAPITALS</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">MARKET_CAPITALS</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {formatComparisonMetric(result.reportB.financials.marketCap)}</span>
                   </div>
                   {/* Delta Bar */}
@@ -273,9 +273,9 @@ export function Compare({
 
                 {/* Metric Delta Item: PE Ratio */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {formatComparisonMetric(result.reportA.financials.peRatio)}</span>
-                    <span className="text-[9px] tracking-widest">P/E_RATIO_VAL (Lower is Better)</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">P/E_RATIO_VAL (Lower is Better)</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {formatComparisonMetric(result.reportB.financials.peRatio)}</span>
                   </div>
                   {/* Delta Bar */}
@@ -287,9 +287,9 @@ export function Compare({
 
                 {/* Metric Delta Item: Revenue Growth */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {result.reportA.financials.revenueGrowth ? `${(result.reportA.financials.revenueGrowth * 100).toFixed(1)}%` : 'N/A'}</span>
-                    <span className="text-[9px] tracking-widest">REVENUE_GROWTH (YoY)</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">REVENUE_GROWTH (YoY)</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {result.reportB.financials.revenueGrowth ? `${(result.reportB.financials.revenueGrowth * 100).toFixed(1)}%` : 'N/A'}</span>
                   </div>
                   {/* Delta Bar */}
@@ -301,9 +301,9 @@ export function Compare({
 
                 {/* Metric Delta Item: Profit Margin */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {result.reportA.financials.netMargin ? `${(result.reportA.financials.netMargin * 100).toFixed(1)}%` : 'N/A'}</span>
-                    <span className="text-[9px] tracking-widest">NET_PROFIT_MARGINS</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">NET_PROFIT_MARGINS</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {result.reportB.financials.netMargin ? `${(result.reportB.financials.netMargin * 100).toFixed(1)}%` : 'N/A'}</span>
                   </div>
                   {/* Delta Bar */}
@@ -315,9 +315,9 @@ export function Compare({
 
                 {/* Metric Delta Item: Debt-to-Equity */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {result.reportA.financials.debtToEquity ? result.reportA.financials.debtToEquity.toFixed(2) : '0.00'}</span>
-                    <span className="text-[9px] tracking-widest">DEBT_TO_EQUITY (Lower is Better)</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">DEBT_TO_EQUITY (Lower is Better)</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {result.reportB.financials.debtToEquity ? result.reportB.financials.debtToEquity.toFixed(2) : '0.00'}</span>
                   </div>
                   {/* Delta Bar */}
@@ -329,9 +329,9 @@ export function Compare({
 
                 {/* Metric Delta Item: Overall score */}
                 <div className="bg-slate-950/40 border border-slate-900/60 p-4 rounded-xl">
-                  <div className="flex justify-between items-center text-slate-500 mb-2 font-bold uppercase">
+                  <div className="flex justify-between items-center text-slate-400 mb-2 font-bold uppercase">
                     <span className="text-accent-400">{result.reportA.ticker}: {result.reportA.decision?.overallScore || 0}/100</span>
-                    <span className="text-[9px] tracking-widest">OVERALL_AGENT_SCORE</span>
+                    <span className="text-[11px] tracking-widest text-slate-500">OVERALL_AGENT_SCORE</span>
                     <span className="text-indigo-400">{result.reportB.ticker}: {result.reportB.decision?.overallScore || 0}/100</span>
                   </div>
                   {/* Delta Bar */}
@@ -345,29 +345,29 @@ export function Compare({
 
             {/* Category Winners Card */}
             <div className="hud-panel rounded-2xl p-6 relative flex flex-col">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-1.5 font-tech">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-1.5 font-tech">
                 <Sparkles size={14} className="text-accent-500" /> Category Outliers
               </h3>
 
-              <div className="flex flex-col gap-3 font-mono text-[10px] mt-2">
-                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900 text-xs">
-                  <span className="text-slate-500 font-semibold text-[10px]">Growth Momentum</span>
+              <div className="flex flex-col gap-3 font-mono text-xs mt-2">
+                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900">
+                  <span className="text-slate-400 font-semibold">Growth Momentum</span>
                   {getWinnerBadge(result.comparison.growthWinner, result.reportA, result.reportB)}
                 </div>
-                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900 text-xs">
-                  <span className="text-slate-500 font-semibold text-[10px]">Profit Margins</span>
+                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900">
+                  <span className="text-slate-400 font-semibold">Profit Margins</span>
                   {getWinnerBadge(result.comparison.marginWinner, result.reportA, result.reportB)}
                 </div>
-                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900 text-xs">
-                  <span className="text-slate-500 font-semibold text-[10px]">Valuation Pricing</span>
+                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900">
+                  <span className="text-slate-400 font-semibold">Valuation Pricing</span>
                   {getWinnerBadge(result.comparison.valuationWinner, result.reportA, result.reportB)}
                 </div>
-                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900 text-xs">
-                  <span className="text-slate-500 font-semibold text-[10px]">Safety & Leverage</span>
+                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900">
+                  <span className="text-slate-400 font-semibold">Safety & Leverage</span>
                   {getWinnerBadge(result.comparison.riskWinner, result.reportA, result.reportB)}
                 </div>
-                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900 text-xs">
-                  <span className="text-slate-500 font-semibold text-[10px]">Competitive Moat</span>
+                <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-lg border border-slate-900">
+                  <span className="text-slate-400 font-semibold">Competitive Moat</span>
                   {getWinnerBadge(result.comparison.moatWinner, result.reportA, result.reportB)}
                 </div>
               </div>

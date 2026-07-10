@@ -67,12 +67,12 @@ export function MetricCard({
       </div>
 
       <div className="flex justify-between items-start z-10 relative">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-tech">
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-400 font-tech">
           {title}
         </span>
         <button 
           onClick={() => setShowExplanation(!showExplanation)}
-          className="text-slate-600 hover:text-accent-400 transition-colors p-0.5 rounded-full"
+          className="text-slate-500 hover:text-accent-400 transition-colors p-0.5 rounded-full"
           title="Explain this metric"
         >
           <HelpCircle size={13} />
@@ -84,45 +84,45 @@ export function MetricCard({
           {value}
         </span>
         {hasTrend && (
-          <span className={`text-[10px] font-black font-mono px-1.5 py-0.5 rounded bg-slate-950/60 border border-slate-900 ${trendColor}`}>
+          <span className={`text-[11px] font-black font-mono px-1.5 py-0.5 rounded bg-slate-950/60 border border-slate-900 ${trendColor}`}>
             {trend}
           </span>
         )}
       </div>
 
       {/* Source metadata with stars */}
-      <div className="flex justify-between items-center border-t border-slate-900/60 pt-2 mt-1 text-[9px] text-slate-500 font-mono z-10 relative">
+      <div className="flex justify-between items-center border-t border-slate-900/60 pt-2 mt-1 text-[11px] text-slate-400 font-mono z-10 relative">
         <span>{source || 'Data Feed'}</span>
         {renderStars(reliability)}
       </div>
 
       {/* Interactive Explanation Panel */}
       {showExplanation && (
-        <div className="absolute inset-0 bg-[#060a14] rounded-xl p-3.5 z-20 border border-accent-500/30 flex flex-col justify-between animate-fade-in text-[11px] font-sans">
+        <div className="absolute inset-0 bg-[#0b1325] rounded-xl p-3.5 z-20 border border-accent-500/30 flex flex-col justify-between animate-fade-in text-xs font-sans">
           <div className="flex flex-col gap-1.5">
             <div className="flex justify-between items-center pb-1 border-b border-slate-900">
-              <span className="font-bold text-accent-400 uppercase tracking-widest text-[9px] font-tech">
+              <span className="font-bold text-accent-400 uppercase tracking-widest text-[10px] font-tech">
                 Console Diagnostic
               </span>
               <button 
                 onClick={() => setShowExplanation(false)} 
-                className="text-slate-500 hover:text-white font-bold text-xs"
+                className="text-slate-400 hover:text-white font-bold text-xs"
               >
                 ✕
               </button>
             </div>
-            <p className="text-slate-300 leading-relaxed font-normal">
+            <p className="text-slate-200 leading-relaxed font-normal">
               {explanation || `Fundamental indicator retrieved from audit node.`}
             </p>
             {benchmark && (
-              <div className="text-[9px] text-slate-500 mt-1 font-mono flex items-center gap-1">
-                <span className="text-accent-500 font-bold">// BENCHMARK:</span> {benchmark}
+              <div className="text-[10px] text-slate-400 mt-1 font-mono flex items-center gap-1">
+                <span className="text-accent-400 font-bold">// BENCHMARK:</span> {benchmark}
               </div>
             )}
           </div>
           <button 
             onClick={() => setShowExplanation(false)}
-            className="w-full text-center py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded font-mono text-[9px] transition-colors mt-2"
+            className="w-full text-center py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 rounded font-mono text-[10px] transition-colors mt-2"
           >
             DISMISS_CONSOLE
           </button>
@@ -131,7 +131,7 @@ export function MetricCard({
 
       {/* Hidden Interview Mode overlay */}
       {isInterviewMode && interviewTip && (
-        <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold text-[9px] px-1.5 py-0.5 rounded shadow-lg opacity-90 group-hover:opacity-100 transition-opacity">
+        <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded shadow-lg opacity-90 group-hover:opacity-100 transition-opacity">
           💡 Interview Pro Tip
         </div>
       )}
